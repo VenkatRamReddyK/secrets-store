@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 import useInterval from './services/useInterval.js';
 import useTimeout from './services/useTimeout.js';
+// import FileUpload from './FileUpload.js';
 
 export default function Component() {
   const [count, setCount] = useState(10);
@@ -30,7 +31,9 @@ export default function Component() {
     console.log('reading...');
     console.log('saving...');
     // axios.defaults.headers.common['Authorization'] = 'Bearer token';
-    axios.get('secrets.json').then((response) => {
+    let url =
+      'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211003%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211003T000825Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a87a527b55a5b7feb898863f88108066ba062773ecc2e7add39ec91811fdf48f';
+    axios.get(url).then((response) => {
       console.log('response: ', response);
     });
   };
@@ -41,14 +44,13 @@ export default function Component() {
       // 'Access-Control-Allow-Headers': '*',
       // 'Access-Control-Allow-Origin': '*',
     };
-    let data = { name: 'Hello Keertrana' };
-    axios
-      .post('https://react-22mwmp.stackblitz.io/secrets.json', data, {
-        headers,
-      })
-      .then((response) => {
-        console.log('response: ', response);
-      });
+    let data = { name: 'Hello gasai' };
+    const url =
+      'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211003%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211003T005834Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=28abedb216ac5b96d4b37581d27c4b1f8e91c96291bd80c9c37c5a13838efecd';
+
+    axios.put(url, data).then((response) => {
+      console.log('response: ', response);
+    });
   };
   return (
     <>
@@ -56,6 +58,8 @@ export default function Component() {
       <h1>{count}</h1>
       {visible && <p>Hurrey It's a boy</p>}
       <button onClick={() => getData()}>Get Data</button>
+
+      {/* <FileUpload /> */}
     </>
   );
 }
