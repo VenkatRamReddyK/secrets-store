@@ -1,3 +1,9 @@
 h1, p {
   font-family: Lato;
 }
+
+.reveal-container {
+  width: 100vw;
+  height: 100vh;
+  background-image: url('images/tadi_family.jpeg');
+}

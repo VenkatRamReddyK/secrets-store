@@ -4,8 +4,9 @@ import Surprise from './Surprise.js';
 
 export default function App() {
   return (
-    <div>
-      <Surprise />
+    <div className="reveal-container">
+      {/* <img src="tadi_family.jpeg" /> */}
+      {/* <Surprise /> */}
     </div>
   );
 }
