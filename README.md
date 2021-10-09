@@ -1,3 +1,3 @@
-# react-22mwmp
+# secret-store
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/react-22mwmp)
+[Edit secret-store ⚡️](https://stackblitz.com/edit/secret-store)
