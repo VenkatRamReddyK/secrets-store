@@ -1,9 +1,71 @@
-h1, p {
-  font-family: Lato;
+@import url('https://fonts.googleapis.com/css2?family=Birthstone&display=swap');
+
+
+*{
+  font-family: 'Birthstone', cursive;
 }
 
+
+
 .reveal-container {
-  width: 40vw;
-  height: 30vh;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
   /* background-image: url('images/tadi_family.jpeg'); */
+}
+
+.elements{
+  margin:20% 20% 40px;
+}
+#cover {
+  background: #222 url('https://secrets-store.vercel.app/tadi_family.jpeg') center center no-repeat;
+  background-size: cover;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#cover-caption {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* only used for background overlay not needed for centering */
+form:before {
+  content: '';
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: rgba(0,0,0,0.3);
+  z-index: -1;
+  border-radius: 10px;
+}
+
+.submitButton{
+  margin: 30px 0 0 0 ;
+}
+
+.display-4{
+  font-size: 4rem;
+  letter-spacing: 2px;
+}
+
+ label{
+  font-size: 2rem;
+  letter-spacing: 2px;
+}
+
+input{
+  font-size: 1.6rem;
+}
+.navigation{
+  position: absolute;
+  z-index: 999;
+  list-style: none;
+  font-size: 2rem;
 }
