@@ -18,11 +18,11 @@ export default function App() {
         <div>
           <nav className="navigation">
             <ul>
-              <li>
+              {/* <li>
                 <Link to="/">Home</Link>
-              </li>
+              </li> */}
               <li>
-                <Link to="/input">Input</Link>
+                <Link to="/">Input</Link>
               </li>
             </ul>
           </nav>
@@ -30,15 +30,15 @@ export default function App() {
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
           <Switch>
-            <Route path="/input">
+            <Route path="/">
               <Input />
             </Route>
-            <Route path="/Reveal">
+            {/* <Route path="/Reveal">
               <Reveal />
-            </Route>
-            <Route path="/">
+            </Route> */}
+            {/* <Route path="/">
               <Surprise />
-            </Route>
+            </Route> */}
           </Switch>
         </div>
       </Router>

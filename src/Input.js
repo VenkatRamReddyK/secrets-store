@@ -5,10 +5,25 @@ import Button from '@restart/ui/esm/Button';
 
 
 export default function input() {
-    const [Gender, setGender] = useState('');
+    const [gender, setGender] = useState('');
     const [passCode, setpassCode] = useState(0);
     const ariaLabel = "Enter the Passcode"
     const { width, height } = '100%';
+
+    const saveData = (inputData) => {
+        // const headers = {
+        //     'content-type': 'text/json;charset=utf-8',
+        //     // 'Access-Control-Allow-Headers': '*',
+        //     // 'Access-Control-Allow-Origin': '*',
+        // };
+        console.log("In Save Data");
+        let data = { gender: 'm', passcode: 'tanvi' };
+        // let data = { gender: gender, passcode: passCode };
+        url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
+        axios.put(url, data).then((response) => {
+            console.log('response: ', response);
+        });
+    };
     return (
         <div>
             <Confetti
@@ -44,8 +59,8 @@ export default function input() {
                                                             <label class="sr-only inputsHeading">Something About Gender</label>
                                                             <Form.Select aria-label="Default select example">
                                                                 <option>Select the Gender</option>
-                                                                <option value="1">Male</option>
-                                                                <option value="2">Female</option>
+                                                                <option value="m">Male</option>
+                                                                <option value="f">Female</option>
                                                             </Form.Select>
                                                         </div>
                                                     </Col>
@@ -58,7 +73,12 @@ export default function input() {
 
                                                 </Row>
                                             </Container>
-                                            <Button type="submit" class="btn btn-primary btn-lg submitButton">Send My Answer</Button>
+                                            <Button
+                                                type="submit"
+                                                onClick={() => saveData()}
+                                                class="btn btn-primary btn-lg submitButton">
+                                                Send My Answer
+                                            </Button>
                                         </Form>
 
                                     </div>
