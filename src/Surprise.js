@@ -6,7 +6,7 @@ import useTimeout from './services/useTimeout.js';
 
 export default function Component() {
   const [count, setCount] = useState(5);
-  const [delay, setDelay] = useState(null);
+  const [delay, setDelay] = useState(null); //10
   const [visible, setVisible] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
 
@@ -49,8 +49,21 @@ export default function Component() {
   //     revealGender(response.data);
   //   });
   // };
+  const getDecryptedGender = (encryptedGender, inputPasscode) => {
+    let gender = decryptedDES(encryptedGender, inputPasscode);
+    let genderImage = getImage(gender);
+    setGenderImage(genderImage);
+  };
 
-  // const saveData = () => {
+  const getEncryptedGender = (gender, passcode) => {
+    let encryptedGender = encryptDES(gender, passcode);
+    let data = {
+      passcode: encryptedGender,
+    };
+    saveData(data);
+  };
+
+  // const saveData = (inputData) => {
   //   const headers = {
   //     'content-type': 'text/json;charset=utf-8',
   //     // 'Access-Control-Allow-Headers': '*',
