@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 import useInterval from './services/useInterval.js';
 import useTimeout from './services/useTimeout.js';
-// import FileUpload from './FileUpload.js';
 
 export default function Component() {
   const [count, setCount] = useState(5);
@@ -70,8 +69,6 @@ export default function Component() {
       <h1>{count}</h1>
       {visible && <p>Hurrey It's a boy</p>}
       <button onClick={() => getData()}>Get Data</button>
-
-      {/* <FileUpload /> */}
     </>
   );
 }
