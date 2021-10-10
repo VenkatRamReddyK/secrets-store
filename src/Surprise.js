@@ -20,7 +20,7 @@ export default function Component() {
 
   const revealGender = (gender) => {
     console.log('revealGender gender: ', gender);
-    axios.get('./tadi_family.jpeg').then((response) => {
+    axios.get('./test.jpeg').then((response) => {
       console.log('response: ', response.data);
       setImageSrc(response.data);
       setVisible(true);
@@ -67,7 +67,10 @@ export default function Component() {
   return (
     <>
       <div className="reveal-container">
-        {visible && <img className="reveal-image" src={imageSrc} />}
+        <img
+          className="reveal-image"
+          src="https://secrets-store.vercel.app/tadi_family.jpeg"
+        />
       </div>
       {/* <button onClick={() => saveData()}>Save Data</button> */}
       {/* <h1>{count}</h1> */}
