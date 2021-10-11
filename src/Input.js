@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
 import { Container, Form, Row, Col } from 'react-bootstrap';
 import Button from '@restart/ui/esm/Button';
@@ -10,13 +10,16 @@ export default function input() {
     const ariaLabel = "Enter the Passcode"
     const { width, height } = '100%';
 
-    const saveData = (inputData) => {
-        // const headers = {
-        //     'content-type': 'text/json;charset=utf-8',
-        //     // 'Access-Control-Allow-Headers': '*',
-        //     // 'Access-Control-Allow-Origin': '*',
-        // };
-        console.log("In Save Data");
+    // const getEncryptedGender = (gender, passcode) => {
+    //   let encryptedGender = encryptDES(gender, passcode);
+    //   let data = {
+    //     passcode: encryptedGender,
+    //   };
+    //   saveData(data);
+    // };
+
+    const saveData = (form) => {
+        console.log("In Save Data: ", form);
         let data = { gender: 'm', passcode: 'tanvi' };
         // let data = { gender: gender, passcode: passCode };
         url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
@@ -24,6 +27,7 @@ export default function input() {
             console.log('response: ', response);
         });
     };
+
     return (
         <div>
             <Confetti
@@ -51,7 +55,8 @@ export default function input() {
                                 <div class="col-xl-8 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
                                     <h1 class="display-4 py-2">Now it's your turn to Guess</h1>
                                     <div class="px-2">
-                                        <Form action="" class="justify-content-center forms-inline">
+                                        <Form action="" onSubmit={saveData} class="justify-content-center forms-inline"
+                                            controlId="formBasicEmail">
                                             <Container>
                                                 <Row>
                                                     <Col md={6}>
@@ -75,7 +80,7 @@ export default function input() {
                                             </Container>
                                             <Button
                                                 type="submit"
-                                                onClick={() => saveData()}
+                                                // onClick={() => saveData()}
                                                 class="btn btn-primary btn-lg submitButton">
                                                 Send My Answer
                                             </Button>

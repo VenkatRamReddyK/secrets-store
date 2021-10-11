@@ -11,11 +11,12 @@ body {
   background-size: cover;
   height: 100%;
 }
-.reveal-container {
-  /* background: #222 url('https://secrets-store.vercel.app/tadi_family.jpeg') center center no-repeat; */
-  /* width: 100vw;
-  height: 100vh;
-  position: absolute;   */
+.reveal-container {  
+  width: 100vw;
+  height: 100vh;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .elements{
