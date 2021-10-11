@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
-import { Container, Form, Row, Col } from 'react-bootstrap';
+import { Container, Form, Row, Col, Toast } from 'react-bootstrap';
 import Button from '@restart/ui/esm/Button';
+import axios from 'axios';
 
 
 export default function input() {
     const [gender, setGender] = useState('');
-    const [passCode, setpassCode] = useState(0);
+    const [passCode, setpassCode] = useState("********");
     const ariaLabel = "Enter the Passcode"
     const { width, height } = '100%';
+    const [show, setShow] = useState(false);
+
+    function validateForm(params) {
+        
+    }
 
     // const getEncryptedGender = (gender, passcode) => {
     //   let encryptedGender = encryptDES(gender, passcode);
@@ -18,13 +24,18 @@ export default function input() {
     //   saveData(data);
     // };
 
+
     const saveData = (form) => {
         console.log("In Save Data: ", form);
-        let data = { gender: 'm', passcode: 'tanvi' };
-        // let data = { gender: gender, passcode: passCode };
-        url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
+        // let data = { gender: 'm', passcode: 'tanvi' };
+        if(validateForm(gender,passCode))
+        {
+
+        }
+        let data = { gender: gender, passcode: passCode };
+        const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
         axios.put(url, data).then((response) => {
-            console.log('response: ', response);
+            console.log('response: ', data);
         });
     };
 
@@ -48,21 +59,20 @@ export default function input() {
                 tweenDuration={1000}
             />
             <div >
-                <section id="cover" class="min-vh-100">
+                <section id="cover" className="min-vh-100">
                     <div id="cover-caption">
-                        <div class="container">
-                            <div class="row text-white">
-                                <div class="col-xl-8 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
-                                    <h1 class="display-4 py-2">Now it's your turn to Guess</h1>
-                                    <div class="px-2">
-                                        <Form action="" onSubmit={saveData} class="justify-content-center forms-inline"
-                                            controlId="formBasicEmail">
+                        <div className="container">
+                            <div className="row text-white">
+                                <div className="col-xl-10 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-5">
+                                    <h1 className="display-4 py-2">Now it's your turn to Guess</h1>
+                                    <div className="px-2">
+                                        <Form onSubmit={saveData} className="justify-content-center forms-inline">
                                             <Container>
                                                 <Row>
                                                     <Col md={6}>
-                                                        <div class="form-group">
-                                                            <label class="sr-only inputsHeading">Something About Gender</label>
-                                                            <Form.Select aria-label="Default select example">
+                                                        <div className="form-group">
+                                                            <label className="sr-only inputsHeading">Gender</label>
+                                                            <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
                                                                 <option>Select the Gender</option>
                                                                 <option value="m">Male</option>
                                                                 <option value="f">Female</option>
@@ -70,18 +80,17 @@ export default function input() {
                                                         </div>
                                                     </Col>
                                                     <Col md={6}>
-                                                        <div class="form-group">
-                                                            <label class="sr-only">Passcode</label>
-                                                            <input type="text" class="form-control" placeholder="********" />
+                                                        <div className="form-group">
+                                                            <label className="sr-only">Passcode</label>
+                                                            <input type="text" className="form-control" placeholder="********" value={passCode} onChange={(e) => setpassCode(e.target.value)} />
                                                         </div>
                                                     </Col>
 
                                                 </Row>
                                             </Container>
                                             <Button
-                                                type="submit"
-                                                // onClick={() => saveData()}
-                                                class="btn btn-primary btn-lg submitButton">
+                                                onClick={() => saveData()}
+                                                className="btn btn-primary btn-lg submitButton">
                                                 Send My Answer
                                             </Button>
                                         </Form>
@@ -93,6 +102,18 @@ export default function input() {
                     </div>
                 </section>
             </div>
+            <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
+                <Toast.Header>
+                    <img
+                        src="holder.js/20x20?text=%20"
+                        className="rounded me-2"
+                        alt=""
+                    />
+                    <strong className="me-auto">Bootstrap</strong>
+                    <small>11 mins ago</small>
+                </Toast.Header>
+                <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+            </Toast>
         </div>
     )
 }
