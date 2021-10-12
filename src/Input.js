@@ -3,6 +3,7 @@ import Confetti from 'react-confetti'
 import { Container, Form, Row, Col, Toast } from 'react-bootstrap';
 import Button from '@restart/ui/esm/Button';
 import axios from 'axios';
+const Cryptr = require('cryptr');
 
 
 export default function input() {
@@ -28,7 +29,10 @@ export default function input() {
         console.log("In Save Data: ", form);
         // let data = { gender: 'm', passcode: 'tanvi' };
         if (validateForm(gender, passCode)) {
-            let data = { gender: gender, passcode: passCode };
+            let cryptr = new Cryptr(passCode);
+            const encryptedString = cryptr.encrypt(gender);
+            // const decryptedString = cryptr.decrypt(encryptedString);
+            let data = { gender: encryptedString, passcode: passCode };
             const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
             axios.put(url, data).then((response) => {
                 console.log('response: ', data);
@@ -75,7 +79,7 @@ export default function input() {
                                                             <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
                                                                 <option>Select the Gender</option>
                                                                 <option value="male">Male</option>
-                                                                <option value="false">Female</option>
+                                                                <option value="female">Female</option>
                                                             </Form.Select>
                                                         </div>
                                                     </Col>
