@@ -97,7 +97,6 @@ export default function Component() {
 
 
   function revelGender(params) {
-    setinfoText("Something is bigger");
     setVisible(true)
   }
 
