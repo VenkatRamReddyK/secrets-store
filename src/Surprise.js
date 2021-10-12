@@ -5,8 +5,8 @@ import useInterval from './services/useInterval.js';
 import useTimeout from './services/useTimeout.js';
 
 export default function Component() {
-  const [count, setCount] = useState(10);
-  const [delay, setDelay] = useState(null); //10
+  const [count, setCount] = useState(3);
+  const [delay, setDelay] = useState(null); //3
   const [visible, setVisible] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [imageSrc, setImageSrc] = useState(null);
@@ -18,7 +18,7 @@ export default function Component() {
       setCount(count - 1);
     } else {
       setDelay(null);
-      getData();
+      // getData();      
     }
 
   }, delay);
@@ -34,15 +34,27 @@ export default function Component() {
       'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155423Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f6629ac618871e1d6a28cb23c02498e3874e1793e6c6033eb44f161407211639';
     axios.get(url).then((response) => {
       console.log('response: ', response.data);
+      try {
+        
       let cryptr = new Cryptr(passcode);
-      if(response.data.passcode === passcode) {
+      // const encryptedPasscode = cryptr.encrypt(passcode);
+      const decryptedPasscode = cryptr.decrypt(response.data.passcode);
+      // console.log("Input encrypted passcode: ", encryptedPasscode);
+      console.log("Ciper passcode: ", response.data.passcode);
+      
+      if(decryptedPasscode === passcode) {
         const decryptedString = cryptr.decrypt(response.data.gender);
-        // const decryptedString = cryptr.decrypt(response.data.gender);
         setGender(decryptedString);
+        // const decryptedString = cryptr.decrypt(response.data.gender);
+        setDelay(1000);        
       } else {
         setError("Invalid passcode");
       }
-      
+    }
+    catch(error) {
+      setError("Invalid passcode");
+    };
+    
     });
   };
   // const getDecryptedGender = (encryptedGender, inputPasscode) => {
@@ -66,7 +78,7 @@ export default function Component() {
   }
 
   const submitPasscode = () => {
-    setDelay(1000);
+    getData();    
   }
 
   return (
@@ -92,7 +104,7 @@ export default function Component() {
           )}
         {/* <button onClick={() => saveData()}>Save Data</button> */} */}
         <h1>{count}</h1>
-          {visible && !!gender && !error && (
+          {visible && !!gender && !error && !delay && (
             <p>Hurrey It's a {gender}</p>
           )}
           {error && (

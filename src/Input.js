@@ -30,9 +30,10 @@ export default function input() {
         // let data = { gender: 'm', passcode: 'tanvi' };
         if (validateForm(gender, passCode)) {
             let cryptr = new Cryptr(passCode);
-            const encryptedString = cryptr.encrypt(gender);
-            // const decryptedString = cryptr.decrypt(encryptedString);
-            let data = { gender: encryptedString, passcode: passCode };
+            const encryptedGender = cryptr.encrypt(gender);
+            const encryptedPasscode = cryptr.encrypt(passCode);
+            // const decryptedString = cryptr.decrypt(encryptedGender);
+            let data = { gender: encryptedGender, passcode: encryptedPasscode };
             const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
             axios.put(url, data).then((response) => {
                 console.log('response: ', data);
@@ -68,7 +69,7 @@ export default function input() {
                         <div className="container">
                             <div className="row text-white">
                                 <div className="col-xl-10 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-5">
-                                    <h1 className="display-4 py-2">Now it's your turn to Guess</h1>
+                                    <h1 className="display-4 py-2">Now it's your turn to Input</h1>
                                     <div className="px-2">
                                         <Form onSubmit={saveData} className="justify-content-center forms-inline">
                                             <Container>
