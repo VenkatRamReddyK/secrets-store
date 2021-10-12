@@ -7,36 +7,36 @@ import axios from 'axios';
 
 export default function input() {
     const [gender, setGender] = useState('');
-    const [passCode, setpassCode] = useState("********");
+    const [passCode, setpassCode] = useState("");
     const ariaLabel = "Enter the Passcode"
     const { width, height } = '100%';
     const [show, setShow] = useState(false);
 
-    function validateForm(params) {
-        
-    }
+    function validateForm(gender, passCode) {
+        if (gender.length <= 3)
+            return false;
 
-    // const getEncryptedGender = (gender, passcode) => {
-    //   let encryptedGender = encryptDES(gender, passcode);
-    //   let data = {
-    //     passcode: encryptedGender,
-    //   };
-    //   saveData(data);
-    // };
+        if (passCode.length <= 4)
+            return false;
+
+        console.log(gender.length, "Asdasd", passCode.length);
+        return true;
+    }
 
 
     const saveData = (form) => {
         console.log("In Save Data: ", form);
         // let data = { gender: 'm', passcode: 'tanvi' };
-        if(validateForm(gender,passCode))
-        {
-
+        if (validateForm(gender, passCode)) {
+            let data = { gender: gender, passcode: passCode };
+            const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
+            axios.put(url, data).then((response) => {
+                console.log('response: ', data);
+            });
         }
-        let data = { gender: gender, passcode: passCode };
-        const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
-        axios.put(url, data).then((response) => {
-            console.log('response: ', data);
-        });
+        else {
+            setShow(true);
+        }
     };
 
     return (
@@ -74,8 +74,8 @@ export default function input() {
                                                             <label className="sr-only inputsHeading">Gender</label>
                                                             <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
                                                                 <option>Select the Gender</option>
-                                                                <option value="m">Male</option>
-                                                                <option value="f">Female</option>
+                                                                <option value="male">Male</option>
+                                                                <option value="false">Female</option>
                                                             </Form.Select>
                                                         </div>
                                                     </Col>
@@ -93,6 +93,11 @@ export default function input() {
                                                 className="btn btn-primary btn-lg submitButton">
                                                 Send My Answer
                                             </Button>
+                                            <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
+                                                <Toast.Header>
+                                                    <h3 className="me-auto">Please Make sure your select a gender and insert Passcode which is greater than 5 characters</h3>
+                                                </Toast.Header>
+                                            </Toast>
                                         </Form>
 
                                     </div>
@@ -102,18 +107,6 @@ export default function input() {
                     </div>
                 </section>
             </div>
-            <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
-                <Toast.Header>
-                    <img
-                        src="holder.js/20x20?text=%20"
-                        className="rounded me-2"
-                        alt=""
-                    />
-                    <strong className="me-auto">Bootstrap</strong>
-                    <small>11 mins ago</small>
-                </Toast.Header>
-                <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
-            </Toast>
         </div>
     )
 }
