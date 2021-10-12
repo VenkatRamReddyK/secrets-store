@@ -1,22 +1,34 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 const Cryptr = require('cryptr');
 import useInterval from './services/useInterval.js';
+import TypeIt from "typeit-react";
+import Confetti from 'react-confetti'
 import useTimeout from './services/useTimeout.js';
 
 export default function Component() {
-  const [count, setCount] = useState(3);
+  const [count, setCount] = useState(5);
   const [delay, setDelay] = useState(null); //3
   const [visible, setVisible] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [imageSrc, setImageSrc] = useState(null);
   const [gender, setGender] = useState(null);
   const [error, setError] = useState(null);
+  const [show, setShow] = useState(false);
+  const { width, height } = '100%';
+  const [revealText, setrevealText] = useState(false)
+
+  const SuperStrong = ({ children }) => {
+    return <strong style={{ fontSize: "80px" }}>{children}</strong>;
+  };
+
 
   useInterval(() => {
     if (count > 0) {
       setCount(count - 1);
     } else {
+      setrevealText(true);
       setDelay(null);
       // getData();      
     }
@@ -35,26 +47,28 @@ export default function Component() {
     axios.get(url).then((response) => {
       console.log('response: ', response.data);
       try {
-        
-      let cryptr = new Cryptr(passcode);
-      // const encryptedPasscode = cryptr.encrypt(passcode);
-      const decryptedPasscode = cryptr.decrypt(response.data.passcode);
-      // console.log("Input encrypted passcode: ", encryptedPasscode);
-      console.log("Ciper passcode: ", response.data.passcode);
-      
-      if(decryptedPasscode === passcode) {
-        const decryptedString = cryptr.decrypt(response.data.gender);
-        setGender(decryptedString);
-        // const decryptedString = cryptr.decrypt(response.data.gender);
-        setDelay(1000);        
-      } else {
-        setError("Invalid passcode");
+
+        let cryptr = new Cryptr(passcode);
+        // const encryptedPasscode = cryptr.encrypt(passcode);
+        const decryptedPasscode = cryptr.decrypt(response.data.passcode);
+        // console.log("Input encrypted passcode: ", encryptedPasscode);
+        console.log("Ciper passcode: ", response.data.passcode);
+
+        if (decryptedPasscode === passcode) {
+          const decryptedString = cryptr.decrypt(response.data.gender);
+          setGender(decryptedString);
+          // const decryptedString = cryptr.decrypt(response.data.gender);
+          setDelay(1000);
+        } else {
+          setShow(true);
+          setError("Invalid passcode");
+        }
       }
-    }
-    catch(error) {
-      setError("Invalid passcode");
-    };
-    
+      catch (error) {
+        setShow(true);
+        setError("Invalid passcode");
+      };
+
     });
   };
   // const getDecryptedGender = (encryptedGender, inputPasscode) => {
@@ -70,7 +84,7 @@ export default function Component() {
     // let data = { gender: gender, passcode: passCode };
     let url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
     axios.put(url, data).then((response) => {
-      console.log('response: ', response.passcode);      
+      console.log('response: ', response.passcode);
     });
   };
   const onChange = (input) => {
@@ -78,40 +92,137 @@ export default function Component() {
   }
 
   const submitPasscode = () => {
-    getData();    
+    getData();
   }
+
+
+  function revelGender(params) {
+    setinfoText("Something is bigger");
+    setVisible(true)
+  }
+
 
   return (
     <>
+      {visible && !!gender && !error && !delay && (
+        <Confetti
+          width={width}
+          height={height}
+          // drawShape={ctx => {
+          //     ctx.beginPath()
+          //     for (let i = 0; i < 22; i++) {
+          //         const angle = 0.35 * i
+          //         const x = (0.2 + (1.5 * angle)) * Math.cos(angle)
+          //         const y = (0.2 + (1.5 * angle)) * Math.sin(angle)
+          //         ctx.lineTo(x, y)
+          //     }
+          //     ctx.stroke()
+          //     ctx.closePath()
+          // }}
+          gravity={0.09}
+          tweenDuration={1000}
+        />)}
       <div className="reveal-container">
-        {/* <img
-          className="reveal-image"
-          src="https://secrets-store.vercel.app/tadi_family.jpeg"
-        /> */}
-        {!visible && (
-          <>
-            <p>Do you wan't to reveal the gender ? </p>
-            <button onClick={() => setVisible(true)}>Reveal</button>
-          </>
-        )}
 
-        {
-          visible && (
-            <>
-              Please Enter Passcode <input type="text" onChange={(e) => onChange(e.target.value)} />
-              <button onClick={() => submitPasscode()}>Submit</button>
-            </>
-          )}
-        {/* <button onClick={() => saveData()}>Save Data</button> */} */}
-        <h1>{count}</h1>
-          {visible && !!gender && !error && !delay && (
-            <p>Hurrey It's a {gender}</p>
-          )}
-          {error && (
-            <p>
-              {error}
-            </p>
-          )}
+        <section id="cover" className="min-vh-100">
+          <div id="cover-caption">
+            <div className="container">
+              <div className="row text-white">
+                <div className="col-xl-10 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-5">
+                  <div className="px-2">
+                    <Form className="justify-content-center forms-inline">
+                      <Container>
+
+
+                        <Row>
+                          {!visible && (
+                            <>
+                              <h1 className="display-4 py-2">
+                                <TypeIt
+                                  getBeforeInit={(instance) => {
+                                    instance.type("Want to Find the Gender?").pause(1000).move(-12).delete(4).pause(800).type("Reveal").pause(500).move(12).pause(700).delete(26).pause(500).type("Then Go head and Click the Below Button :P.  Remember you need Password");
+                                    // Remember to return it!
+                                    return instance;
+                                  }}
+                                />
+                              </h1>
+                              <Col md={12}>
+
+                                <Button className="btn btn-primary btn-lg submitButton" onClick={() => revelGender()}>Yes, Reveal Gender</Button>
+                              </Col>
+                            </>
+                          )}
+                          {
+                            visible && (
+                              <>
+                                <h1 className="display-4 py-2">
+                                  <TypeIt
+                                    getBeforeInit={(instance) => {
+                                      instance.type("Ok, Now Enter the Password").pause(1000).move(-12);
+                                      // Remember to return it!
+                                      return instance;
+                                    }}
+                                  />
+                                </h1>
+                                <Col md={12}>
+                                  <input type="text" onChange={(e) => onChange(e.target.value)} />
+                                </Col>
+                                <Button
+                                  onClick={() => submitPasscode()}
+                                  className="btn btn-primary btn-lg submitButton">
+                                  Send My Answer
+                                </Button>
+                              </>
+                            )}
+
+
+                        </Row>
+                        {visible && !!gender && !error && !delay && (
+
+                          <>
+                            <h1 className="display-4 py-2">
+                              <TypeIt
+                                getBeforeInit={(instance) => {
+                                  instance.type("Lets For Count down? Ready").pause(1000).delete(5).pause(500).type("Set").pause(500).delete(3).pause(500).type("Go!").type(10).delete(2).type(9).pause(1000).delete(1).pause(1000).type(8).delete(1).type(7).delete(1).pause(1000).type(6).delete(1).pause(1000).type(5).delete(1).pause(1000).type(10).delete(2).pause(1000);
+                                  // Remember to return it!
+                                  return instance;
+                                }}
+                              />
+                            </h1>
+                          </>
+                        )}
+
+                        {revealText && (
+                          <h2>Hurrey It's a
+                            <TypeIt>
+                              Weak text. <SuperStrong>{gender}</SuperStrong>
+                            </TypeIt>
+                          </h2>
+                        )}
+                      </Container>
+
+
+
+                      <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
+                        <Toast.Header>
+                          <h3 className="me-auto">{error}</h3>
+                        </Toast.Header>
+                      </Toast>
+                    </Form>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        {error && (
+          <p>
+            {error}
+          </p>
+        )}
         {/* <button onClick={() => getData()}>Get Data</button> */}
       </div>
     </>

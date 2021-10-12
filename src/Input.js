@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
-import { Container, Form, Row, Col, Toast } from 'react-bootstrap';
-import Button from '@restart/ui/esm/Button';
+import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 import axios from 'axios';
 const Cryptr = require('cryptr');
 
@@ -12,6 +11,7 @@ export default function input() {
     const ariaLabel = "Enter the Passcode"
     const { width, height } = '100%';
     const [show, setShow] = useState(false);
+    const [infoText, setinfoText] = useState('');
 
     function validateForm(gender, passCode) {
         if (gender.length <= 3)
@@ -25,8 +25,7 @@ export default function input() {
     }
 
 
-    const saveData = (form) => {
-        console.log("In Save Data: ", form);
+    function saveData() {
         // let data = { gender: 'm', passcode: 'tanvi' };
         if (validateForm(gender, passCode)) {
             let cryptr = new Cryptr(passCode);
@@ -36,10 +35,13 @@ export default function input() {
             let data = { gender: encryptedGender, passcode: encryptedPasscode };
             const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
             axios.put(url, data).then((response) => {
+                setinfoText("Response Completed");
+                setShow(true);
                 console.log('response: ', data);
             });
         }
         else {
+            setinfoText("Please Make sure your select a gender and insert Passcode which is greater than 5 characters");
             setShow(true);
         }
     };
@@ -71,7 +73,7 @@ export default function input() {
                                 <div className="col-xl-10 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-5">
                                     <h1 className="display-4 py-2">Now it's your turn to Input</h1>
                                     <div className="px-2">
-                                        <Form onSubmit={saveData} className="justify-content-center forms-inline">
+                                        <Form className="justify-content-center forms-inline">
                                             <Container>
                                                 <Row>
                                                     <Col md={6}>
@@ -100,7 +102,7 @@ export default function input() {
                                             </Button>
                                             <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
                                                 <Toast.Header>
-                                                    <h3 className="me-auto">Please Make sure your select a gender and insert Passcode which is greater than 5 characters</h3>
+                                                    <h3 className="me-auto">{info}</h3>
                                                 </Toast.Header>
                                             </Toast>
                                         </Form>
