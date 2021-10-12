@@ -102,7 +102,7 @@ export default function input() {
                                             </Button>
                                             <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
                                                 <Toast.Header>
-                                                    <h3 className="me-auto">{info}</h3>
+                                                    <h3 className="me-auto">{infoText}</h3>
                                                 </Toast.Header>
                                             </Toast>
                                         </Form>
