@@ -10,6 +10,7 @@ import {
 import Reveal from './Reveal'
 import Surprise from './Surprise.js';
 import Input from './Input'
+import Guess from './Guess';
 
 export default function App() {
   return (
@@ -19,14 +20,15 @@ export default function App() {
           <nav className="navigation">
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/">Guess</Link>
               </li>
               <li>
                 <Link to="/input">Input</Link>
               </li>
               <li>
-                <Link to="/opinion">Opinion</Link>
+                <Link to="/surprise">Surprise</Link>
               </li>
+
             </ul>
           </nav>
 
@@ -38,9 +40,12 @@ export default function App() {
             </Route>
             <Route path="/opinion">
               <Reveal />
+            </Route> */}
+            <Route path="/surprise">
+              <Surprise />
             </Route>
             <Route path="/">
-              <Surprise />
+              <Guess />
             </Route>
           </Switch>
         </div>
