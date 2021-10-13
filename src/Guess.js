@@ -2,33 +2,36 @@ import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 import axios from 'axios';
-
 const Cryptr = require('cryptr');
+import _ from 'lodash'
 
 
 export default function Guess() {
 
 
     const [gender, setGender] = useState('');
-    const [passCode, setpassCode] = useState("");
-    const ariaLabel = "Enter the Passcode"
+    const [name, setname] = useState("");
     const { width, height } = '100%';
     const [show, setShow] = useState(false);
     const [infoText, setinfoText] = useState('');
+    const [isValidForm, setisValidForm] = useState(false);
+    const [oldData, setoldData] = useState([])
+
+    function validateForm() {
+        if (gender.length <= 3 || name.length <= 4)
+            setisValidForm(false);
+        else
+            setisValidForm(true);
+    }
+    useEffect(() => {
+        validateForm()
+    }, [name, gender]);
 
     useEffect(() => {
-        getData();
-    }, []);
-    function validateForm(gender, passCode) {
-        if (gender.length <= 3)
-            return false;
+        if (oldData != null)
+            saveData();
+    }, [oldData])
 
-        if (passCode.length <= 4)
-            return false;
-
-        console.log(gender.length, "Asdasd", passCode.length);
-        return true;
-    }
 
     const getData = () => {
         console.log('In Get Data...');
@@ -36,27 +39,47 @@ export default function Guess() {
             'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6a905f480bfab4ed69dc0801c760f03069f2393e7f2872931318646f1a0799d0';
 
         axios.get(url).then((response) => {
+            setoldData(response.data);
             console.log('response: ', response.data);
         });
     };
 
     function saveData() {
-        // let data = { gender: 'm', passcode: 'tanvi' };
-        if (validateForm(gender, passCode)) {
+        console.log("Data is", oldData)
+        // let data = { gender: 'm', name: 'tanvi' };
+        if (isValidForm) {
             const encryptedGender = gender;
-            const encryptedPasscode = passCode;
+            const encryptedname = name;
 
             // const decryptedString = cryptr.decrypt(encryptedGender);
-            let data = { gender: encryptedGender, passcode: encryptedPasscode };
+            let thisData = [{ gender: encryptedGender, name: encryptedname }];
+            let data = [];
+            let maleArray = [];
+            let femaleArray = [];
+            console.log("Old Data is",oldData)
+
+            maleArray = oldData[0] ? oldData[0].length == 0 ? [] : oldData[0] : [];
+            femaleArray = oldData[1] ? oldData[1].length == 0 ? [] : oldData[1] : [];
+
+            console.log(maleArray);
+
+            if (thisData[0].gender == 'male')
+                maleArray.push(...thisData);
+            else
+                femaleArray.push(...thisData);
+
+            data = [maleArray, femaleArray];
+
+            console.log("Data is ", data)
             const url = 'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fa4980eca12b542dd45fda5ab7d795b9cd89c9c91e5e500e9158f4c7d4bf3500'
             axios.put(url, data).then((response) => {
                 setinfoText("Response Completed");
                 setShow(true);
-                console.log('response: ', data);
+                console.log('response: ', response.data);
             });
         }
         else {
-            setinfoText("Please Make sure your select a gender and insert Passcode which is greater than 5 characters");
+            setinfoText("Please Make sure your select a gender and insert name which is greater than 5 characters");
             setShow(true);
         }
     };
@@ -95,7 +118,7 @@ export default function Guess() {
                                                         <div className="form-group">
                                                             <label className="sr-only inputsHeading">Gender</label>
                                                             <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
-                                                                <option>Select the Gender</option>
+                                                                <option value="no">Select the Gender</option>
                                                                 <option value="male">Male</option>
                                                                 <option value="female">Female</option>
                                                             </Form.Select>
@@ -103,15 +126,16 @@ export default function Guess() {
                                                     </Col>
                                                     <Col md={6}>
                                                         <div className="form-group">
-                                                            <label className="sr-only">Passcode</label>
-                                                            <input type="text" className="form-control" placeholder="********" value={passCode} onChange={(e) => setpassCode(e.target.value)} />
+                                                            <label className="sr-only">name</label>
+                                                            <input type="text" className="form-control" placeholder="********" value={name} onChange={(e) => setname(e.target.value)} />
                                                         </div>
                                                     </Col>
 
                                                 </Row>
                                             </Container>
                                             <Button
-                                                onClick={() => saveData()}
+                                                onClick={() => getData()}
+                                                disabled={!isValidForm}
                                                 className="btn btn-primary btn-lg submitButton">
                                                 Send My Answer
                                             </Button>

@@ -7,14 +7,14 @@ import {
   Link
 } from "react-router-dom";
 
-import Reveal from './Reveal'
+import Graph from './Graph'
 import Surprise from './Surprise.js';
 import Input from './Input'
 import Guess from './Guess';
 
 export default function App() {
   return (
-    <div className="reveal-container">
+    <div >
       <Router>
         <div>
           <nav className="navigation">
@@ -28,6 +28,9 @@ export default function App() {
               <li>
                 <Link to="/surprise">Surprise</Link>
               </li>
+              <li>
+                <Link to="/graph">graph</Link>
+              </li>
 
             </ul>
           </nav>
@@ -38,9 +41,9 @@ export default function App() {
             <Route path="/input">
               <Input />
             </Route>
-            <Route path="/opinion">
-              <Reveal />
-            </Route> */}
+            <Route path="/graph">
+              <Graph />
+            </Route>
             <Route path="/surprise">
               <Surprise />
             </Route>
