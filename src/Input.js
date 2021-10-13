@@ -28,9 +28,12 @@ export default function input() {
     function saveData() {
         // let data = { gender: 'm', passcode: 'tanvi' };
         if (validateForm(gender, passCode)) {
-            let cryptr = new Cryptr(passCode);
-            const encryptedGender = cryptr.encrypt(gender);
-            const encryptedPasscode = cryptr.encrypt(passCode);
+            // let cryptr = new Cryptr(passCode);
+            // const encryptedGender = cryptr.encrypt(gender);
+            // const encryptedPasscode = cryptr.encrypt(passCode);
+            const encryptedGender = gender;
+            const encryptedPasscode = passCode;
+
             // const decryptedString = cryptr.decrypt(encryptedGender);
             let data = { gender: encryptedGender, passcode: encryptedPasscode };
             const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'

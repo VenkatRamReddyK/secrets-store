@@ -5,19 +5,17 @@ const Cryptr = require('cryptr');
 import useInterval from './services/useInterval.js';
 import TypeIt from "typeit-react";
 import Confetti from 'react-confetti'
-import useTimeout from './services/useTimeout.js';
 
 export default function Component() {
   const [count, setCount] = useState(5);
-  const [delay, setDelay] = useState(null); //3
-  const [visible, setVisible] = useState(false);
+  const [delay, setDelay] = useState(null);
+  const [wantToRevealGender, setWantToRevealGender] = useState(false);
+  const [confirmedReveal, setConfirmedReveal] = useState(false);
   const [passcode, setPasscode] = useState("");
-  const [imageSrc, setImageSrc] = useState(null);
   const [gender, setGender] = useState(null);
   const [error, setError] = useState(null);
-  const [show, setShow] = useState(false);
+
   const { width, height } = '100%';
-  const [revealText, setrevealText] = useState(false)
 
   const SuperStrong = ({ children }) => {
     return <strong style={{ fontSize: "80px" }}>{children}</strong>;
@@ -28,54 +26,43 @@ export default function Component() {
     if (count > 0) {
       setCount(count - 1);
     } else {
-      setrevealText(true);
       setDelay(null);
-      // getData();      
     }
-
   }, delay);
 
-  // useTimeout(() => {
-  //   setDelay(null);
-  //   getData();
-  // }, 5000);
-
-  const getData = () => {
-    console.log('reading...');
+  const validatePasscode = () => {
+    console.log('In Get Data...');
+    setConfirmedReveal(true);
+    // setDelay(1000);
     let url =
       'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155423Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f6629ac618871e1d6a28cb23c02498e3874e1793e6c6033eb44f161407211639';
+
+    setError(null);
     axios.get(url).then((response) => {
       console.log('response: ', response.data);
       try {
-
-        let cryptr = new Cryptr(passcode);
-        // const encryptedPasscode = cryptr.encrypt(passcode);
-        const decryptedPasscode = cryptr.decrypt(response.data.passcode);
-        // console.log("Input encrypted passcode: ", encryptedPasscode);
+        // let cryptr = new Cryptr(passcode);
+        // const decryptedPasscode = cryptr.decrypt(response.data.passcode);
+        const decryptedPasscode = response.data.passcode;
         console.log("Ciper passcode: ", response.data.passcode);
 
         if (decryptedPasscode === passcode) {
-          const decryptedString = cryptr.decrypt(response.data.gender);
-          setGender(decryptedString);
-          // const decryptedString = cryptr.decrypt(response.data.gender);
+          //const decryptedString = cryptr.decrypt(response.data.gender);
+          const decryptedString = response.data.gender;
           setDelay(1000);
+          setGender(decryptedString);
         } else {
-          setShow(true);
+          setDelay(null);
           setError("Invalid passcode");
         }
       }
       catch (error) {
-        setShow(true);
+        setDelay(null);
         setError("Invalid passcode");
       };
 
     });
   };
-  // const getDecryptedGender = (encryptedGender, inputPasscode) => {
-  //   let gender = decryptedDES(encryptedGender, inputPasscode);
-  //   let genderImage = getImage(gender);
-  //   setGenderImage(genderImage);
-  // };
 
   // For Testing purpose.
   const saveData = (form) => {
@@ -87,23 +74,10 @@ export default function Component() {
       console.log('response: ', response.passcode);
     });
   };
-  const onChange = (input) => {
-    setPasscode(input);
-  }
-
-  const submitPasscode = () => {
-    getData();
-  }
-
-
-  function revelGender(params) {
-    setVisible(true)
-  }
-
 
   return (
     <>
-      {visible && !!gender && !error && !delay && (
+      {passcode && !!gender && !error && !delay && (
         <Confetti
           width={width}
           height={height}
@@ -134,75 +108,94 @@ export default function Component() {
 
 
                         <Row>
-                          {!visible && (
+                          {/* Want to reveal gender and clicks revealGender*/}
+                          {!wantToRevealGender && !confirmedReveal && (
                             <>
                               <h1 className="display-4 py-2">
                                 <TypeIt
                                   getBeforeInit={(instance) => {
-                                    instance.type("Want to Find the Gender?").pause(1000).move(-12).delete(4).pause(800).type("Reveal").pause(500).move(12).pause(700).delete(26).pause(500).type("Then Go head and Click the Below Button :P.  Remember you need Password");
+                                    instance.type("Want to Reveal the Gender?").pause(500).move(12).pause(700).delete(26).pause(500).type("Then Click Reveal & Go head and Enter Master passcode !");
                                     // Remember to return it!
                                     return instance;
                                   }}
                                 />
                               </h1>
                               <Col md={12}>
-
-                                <Button className="btn btn-primary btn-lg submitButton" onClick={() => revelGender()}>Yes, Reveal Gender</Button>
+                                <Button className="btn btn-primary btn-lg submitButton" onClick={() => setWantToRevealGender(true)}>Yes, Reveal Gender</Button>
                               </Col>
                             </>
                           )}
+
+                          {/* Want to Confirm gender and enters passcode by clicking Submit*/}
                           {
-                            visible && (
+                            wantToRevealGender && !confirmedReveal && (
                               <>
                                 <h1 className="display-4 py-2">
                                   <TypeIt
                                     getBeforeInit={(instance) => {
-                                      instance.type("Ok, Now Enter the Password").pause(1000).move(-12);
+                                      instance.type("Ok, It's your turn to Enter Master Password").pause(1000).move(-12);
                                       // Remember to return it!
                                       return instance;
                                     }}
                                   />
                                 </h1>
-                                <Col md={12}>
-                                  <input type="text" onChange={(e) => onChange(e.target.value)} />
-                                </Col>
+                                <div className="display-4 py-2 master-passcode">
+                                  <input
+                                    type="text"
+                                    placeholder="Please Enter Master Passcode"
+                                    onChange={(e) => setPasscode(e.target.value)}
+                                  />
+                                </div>
                                 <Button
-                                  onClick={() => submitPasscode()}
+                                  onClick={() => validatePasscode()}
+                                  disabled={!passcode || passcode?.length < 5}
                                   className="btn btn-primary btn-lg submitButton">
-                                  Send My Answer
+                                  Validate Master Password
                                 </Button>
                               </>
                             )}
-
-
                         </Row>
-                        {visible && !!gender && !error && !delay && (
 
+                        {wantToRevealGender && confirmedReveal && count > 0 && !error && (
                           <>
                             <h1 className="display-4 py-2">
-                              <TypeIt
+                              <TypeIt>
+                                Let's Count down? Ready
+                              </TypeIt>
+                              {/* <TypeIt
                                 getBeforeInit={(instance) => {
-                                  instance.type("Lets For Count down? Ready").pause(1000).delete(5).pause(500).type("Set").pause(500).delete(3).pause(500).type("Go!").type(10).delete(2).type(9).pause(1000).delete(1).pause(1000).type(8).delete(1).type(7).delete(1).pause(1000).type(6).delete(1).pause(1000).type(5).delete(1).pause(1000).type(10).delete(2).pause(1000);
+                                  instance.type("Let's Count down? Ready");
+                                  //.pause(1000).delete(5).pause(500).type("Set").pause(500).delete(3).pause(500).type("Go!").type(10).delete(2).type(9).pause(1000).delete(1).pause(1000).type(8).delete(1).type(7).delete(1).pause(1000).type(6).delete(1).pause(1000).type(5).delete(1).pause(1000).type(10).delete(2).pause(1000);
                                   // Remember to return it!
                                   return instance;
                                 }}
-                              />
+                              /> */}
+
                             </h1>
                           </>
                         )}
 
-                        {revealText && (
-                          <h2>Hurrey It's a
+                        {/* Show the Counter until delay exist */}
+                        {wantToRevealGender && confirmedReveal && count > 0 && !error && (
+                          <>
+                            {/* <TypeIt> */}
+                            <SuperStrong><p>{count}</p></SuperStrong>
+                            {/* </TypeIt> */}
+                          </>
+                        )}
+
+                        {/* Show the Gender after timer is out */}
+                        {wantToRevealGender && confirmedReveal && !error && count === 0 && (
+                          <h2>Hurra ! It's a
                             <TypeIt>
-                              Weak text. <SuperStrong>{gender}</SuperStrong>
+                              <SuperStrong>{gender}</SuperStrong>
                             </TypeIt>
                           </h2>
                         )}
                       </Container>
 
-
-
-                      <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
+                      {/* Show the error message when error is not null*/}
+                      <Toast onClose={() => setError(null)} show={!!error} delay={6000} autohide>
                         <Toast.Header>
                           <h3 className="me-auto">{error}</h3>
                         </Toast.Header>
@@ -222,7 +215,6 @@ export default function Component() {
             {error}
           </p>
         )}
-        {/* <button onClick={() => getData()}>Get Data</button> */}
       </div>
     </>
   );
