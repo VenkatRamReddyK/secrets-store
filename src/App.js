@@ -24,6 +24,9 @@ export default function App() {
               <li>
                 <Link to="/input">Input</Link>
               </li>
+              <li>
+                <Link to="/opinion">Opinion</Link>
+              </li>
             </ul>
           </nav>
 
@@ -33,9 +36,9 @@ export default function App() {
             <Route path="/input">
               <Input />
             </Route>
-            {/* <Route path="/Reveal">
+            <Route path="/opinion">
               <Reveal />
-            </Route> */}
+            </Route>
             <Route path="/">
               <Surprise />
             </Route>

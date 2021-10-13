@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 import axios from 'axios';
-const Cryptr = require('cryptr');
+import StringCrypto from 'string-crypto';
 
 
 export default function input() {
@@ -20,7 +20,7 @@ export default function input() {
         if (passCode.length <= 4)
             return false;
 
-        console.log(gender.length, "Asdasd", passCode.length);
+        console.log(gender.length, passCode.length);
         return true;
     }
 
@@ -28,6 +28,16 @@ export default function input() {
     function saveData() {
         // let data = { gender: 'm', passcode: 'tanvi' };
         if (validateForm(gender, passCode)) {
+            const {
+                encryptString,
+                decryptString,
+            } = new StringCrypto();
+
+            let encryptedString = encryptString(gender, passCode);
+
+            console.log('Encrypted String:', encryptedString);
+
+            console.log('Decrypted String:', decryptString(encryptedString, passCode))
             // let cryptr = new Cryptr(passCode);
             // const encryptedGender = cryptr.encrypt(gender);
             // const encryptedPasscode = cryptr.encrypt(passCode);
