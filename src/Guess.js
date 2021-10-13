@@ -3,63 +3,37 @@ import Confetti from 'react-confetti'
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 import axios from 'axios';
 
-const Cryptr = require('cryptr');
+const getUrl =
+    'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6a905f480bfab4ed69dc0801c760f03069f2393e7f2872931318646f1a0799d0';
+const putUrl = 'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fa4980eca12b542dd45fda5ab7d795b9cd89c9c91e5e500e9158f4c7d4bf3500';
 
-
-export default function Guess() {
-
-
-    const [gender, setGender] = useState('');
-    const [passCode, setpassCode] = useState("");
-    const ariaLabel = "Enter the Passcode"
+const Guess = () => {
+    const [gender, setGender] = useState('default');
+    const [name, setName] = useState("");
     const { width, height } = '100%';
-    const [show, setShow] = useState(false);
-    const [infoText, setinfoText] = useState('');
+    const [infoText, setInfoText] = useState('');
 
-    useEffect(() => {
-        getData();
-    }, []);
-    function validateForm(gender, passCode) {
-        if (gender.length <= 3)
-            return false;
-
-        if (passCode.length <= 4)
-            return false;
-
-        console.log(gender.length, "Asdasd", passCode.length);
-        return true;
-    }
-
-    const getData = () => {
-        console.log('In Get Data...');
-        let url =
-            'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6a905f480bfab4ed69dc0801c760f03069f2393e7f2872931318646f1a0799d0';
-
-        axios.get(url).then((response) => {
-            console.log('response: ', response.data);
+    const saveYourGuess = () => {
+        axios.get(getUrl).then((getResponse) => {
+            let prevGuesses = getResponse.data ? getResponse.data : [];
+            console.log("Previous Data ", prevGuesses)
+            const yourGuess = { gender: gender, name: name };
+            const isDuplicateGuess = prevGuesses.some(prevGuess => prevGuess.name === name);
+            if (!isDuplicateGuess) {
+                let data = [...prevGuesses, yourGuess];
+                axios.put(putUrl, data).then((response) => {
+                    setInfoText(name + " your Guess is recorded !");
+                    setGender('default');
+                    setName('');
+                    console.log('response: ', response.data);
+                });
+            } else {
+                setInfoText(name + " your Guess is already recorded !");
+                setGender('default');
+                setName('');
+            }
         });
-    };
-
-    function saveData() {
-        // let data = { gender: 'm', passcode: 'tanvi' };
-        if (validateForm(gender, passCode)) {
-            const encryptedGender = gender;
-            const encryptedPasscode = passCode;
-
-            // const decryptedString = cryptr.decrypt(encryptedGender);
-            let data = { gender: encryptedGender, passcode: encryptedPasscode };
-            const url = 'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fa4980eca12b542dd45fda5ab7d795b9cd89c9c91e5e500e9158f4c7d4bf3500'
-            axios.put(url, data).then((response) => {
-                setinfoText("Response Completed");
-                setShow(true);
-                console.log('response: ', data);
-            });
-        }
-        else {
-            setinfoText("Please Make sure your select a gender and insert Passcode which is greater than 5 characters");
-            setShow(true);
-        }
-    };
+    }
 
     return (
         <div>
@@ -95,7 +69,7 @@ export default function Guess() {
                                                         <div className="form-group">
                                                             <label className="sr-only inputsHeading">Gender</label>
                                                             <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
-                                                                <option>Select the Gender</option>
+                                                                <option value="default">Select the Gender</option>
                                                                 <option value="male">Male</option>
                                                                 <option value="female">Female</option>
                                                             </Form.Select>
@@ -103,21 +77,24 @@ export default function Guess() {
                                                     </Col>
                                                     <Col md={6}>
                                                         <div className="form-group">
-                                                            <label className="sr-only">Passcode</label>
-                                                            <input type="text" className="form-control" placeholder="********" value={passCode} onChange={(e) => setpassCode(e.target.value)} />
+                                                            <label className="sr-only">name</label>
+                                                            <input type="text" className="form-control" placeholder="Enter minimum 5 characters" value={name} onChange={(e) => setName(e.target.value)} />
                                                         </div>
                                                     </Col>
 
                                                 </Row>
                                             </Container>
                                             <Button
-                                                onClick={() => saveData()}
+                                                onClick={() => saveYourGuess()}
+                                                disabled={gender === 'default' || name.length <= 4}
                                                 className="btn btn-primary btn-lg submitButton">
-                                                Send My Answer
-                                            </Button>
-                                            <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
+                                                Save Your Guess
+                                        </Button>
+                                            <Toast onClose={() => setInfoText('')} show={!!infoText} delay={6000} autohide>
                                                 <Toast.Header>
-                                                    <h3 className="me-auto">{infoText}</h3>
+                                                    <h3 className="me-auto">
+                                                        {infoText}
+                                                    </h3>
                                                 </Toast.Header>
                                             </Toast>
                                         </Form>
@@ -129,6 +106,9 @@ export default function Guess() {
                     </div>
                 </section>
             </div>
-        </div>
+        </div >
     )
 }
+
+
+export default Guess;
