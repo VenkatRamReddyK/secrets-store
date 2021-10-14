@@ -5,6 +5,8 @@ import StringCrypto from 'string-crypto';
 import useInterval from './services/useInterval.js';
 import TypeIt from "typeit-react";
 import Confetti from 'react-confetti'
+import Graph from './Graph.js';
+
 
 export default function Component() {
   const [count, setCount] = useState(10);
@@ -41,7 +43,7 @@ export default function Component() {
 
     setError(null);
     axios.get(url).then((response) => {
-      // console.log('response: ', response.data);
+      console.log('response: ', response.data);
       try {
         const {
           decryptString,
@@ -103,7 +105,6 @@ export default function Component() {
         />
       )}
       <div className="reveal-container">
-
         <section id="cover" className="min-vh-100">
           <div id="cover-caption">
             <div className="container">
@@ -112,8 +113,6 @@ export default function Component() {
                   <div className="px-2">
                     <Form className="justify-content-center forms-inline">
                       <Container>
-
-
                         <Row>
                           {/* Want to reveal gender and clicks revealGender*/}
                           {!wantToRevealGender && !confirmedReveal && (
@@ -215,8 +214,12 @@ export default function Component() {
               </div>
             </div>
           </div>
+          
         </section>
-
+      
+        <div className="chartdiv">
+        <Graph/>
+</div>
 
         {error && (
           <p>

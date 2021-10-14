@@ -33,7 +33,7 @@ export default function Graph() {
         data = data.map(el => {
             return {
                 ...el,
-                value: 200
+                value: 70,
             }
         });
         console.log("data: ", data);
@@ -44,7 +44,6 @@ export default function Graph() {
                 name: "Male",
                 value: maleArray.length * 30,
                 children: maleArray,
-                color: '#fffff'
             },
             {
                 name: "Female",
@@ -61,6 +60,11 @@ export default function Graph() {
         am4core.color(boy),
         am4core.color(girl),
     ];
+    // networkSeries.maxLevels = 1;
+
+    // Expand single level only
+    networkSeries.nodes.template.expandAll = false;
+    networkSeries.nodes.template.fill="#fffff";
     networkSeries.dataFields.value = "value";
     networkSeries.dataFields.name = "name";
     networkSeries.dataFields.children = "children";

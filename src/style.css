@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Birthstone&display=swap');
 
 
-*{
+* {
   font-family: 'Birthstone', cursive;
 }
 
@@ -11,21 +11,26 @@ body {
   background-size: cover;
   height: 100%;
 }
-.reveal-container {  
+
+.reveal-container {
   width: 100vw;
-  height: 100vh;  
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column-reverse;
   color: wheat;
 }
 
-.form-control, .form-select{
+.form-control,
+.form-select {
   font-size: 1.5rem;
 }
-.elements{
-  margin:20% 20% 40px;
+
+.elements {
+  margin: 20% 20% 40px;
 }
+
 #cover {
   background-size: cover;
   height: 100%;
@@ -40,8 +45,18 @@ body {
   position: relative;
   z-index: 1;
 }
-h3{
+
+h3 {
   color: red;
+}
+
+.chartdiv {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -999;
+  pointer-events: none;
+  /* top: 31%; */ 
 }
 
 /* only used for background overlay not needed for centering */
@@ -52,35 +67,37 @@ form:before {
   position: absolute;
   top: 0;
   width: 100%;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   z-index: -1;
   border-radius: 10px;
 }
 
-.submitButton{
-  margin: 30px 0 0 0 ;
+.submitButton {
+  margin: 30px 0 0 0;
 }
 
-.display-4{
+.display-4 {
   font-size: 4rem;
   letter-spacing: 2px;
 }
 
- label{
+label {
   font-size: 2rem;
   letter-spacing: 2px;
 }
 
-input{
+input {
   font-size: 1.6rem;
 }
-.navigation{
+
+.navigation {
   position: absolute;
   z-index: 999;
   list-style: none;
   font-size: 2rem;
 }
+
 .master-passcode {
-  margin: 0 auto !important; 
-  width: 20rem; 
+  margin: 0 auto !important;
+  width: 20rem;
 }
