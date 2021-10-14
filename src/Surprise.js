@@ -1,19 +1,21 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
-const Cryptr = require('cryptr');
+import StringCrypto from 'string-crypto';
 import useInterval from './services/useInterval.js';
 import TypeIt from "typeit-react";
 import Confetti from 'react-confetti'
 
 export default function Component() {
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(10);
   const [delay, setDelay] = useState(null);
   const [wantToRevealGender, setWantToRevealGender] = useState(false);
   const [confirmedReveal, setConfirmedReveal] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [gender, setGender] = useState(null);
   const [error, setError] = useState(null);
+  const boy = "#03D0FE";
+  const girl = "#FE03EF";
 
   const { width, height } = '100%';
 
@@ -39,16 +41,17 @@ export default function Component() {
 
     setError(null);
     axios.get(url).then((response) => {
-      console.log('response: ', response.data);
+      // console.log('response: ', response.data);
       try {
-        // let cryptr = new Cryptr(passcode);
-        // const decryptedPasscode = cryptr.decrypt(response.data.passcode);
-        const decryptedPasscode = response.data.passcode;
-        console.log("Ciper passcode: ", response.data.passcode);
+        const {
+          decryptString,
+        } = new StringCrypto();
+        const decryptedPasscode = decryptString(response.data.passcode, response.data.gender);
+        // console.log("Ciper passcode: ", response.data.passcode);
 
         if (decryptedPasscode === passcode) {
           //const decryptedString = cryptr.decrypt(response.data.gender);
-          const decryptedString = response.data.gender;
+          const decryptedString = decryptString(response.data.gender, passcode);
           setDelay(1000);
           setGender(decryptedString);
         } else {
@@ -58,7 +61,8 @@ export default function Component() {
       }
       catch (error) {
         setDelay(null);
-        setError("Invalid passcode");
+        console.log(error)
+        setError("Invalid passcode", error);
       };
 
     });
@@ -67,8 +71,8 @@ export default function Component() {
   // For Testing purpose.
   const saveData = (form) => {
     console.log("In Save Data: ", form);
-    let data = { gender: 'm', passcode: 'tanvi' };
-    // let data = { gender: gender, passcode: passCode };
+    // let data = { gender: 'm', passcode: 'tanvi' };
+    let data = { gender: gender, passcode: passCode };
     let url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
     axios.put(url, data).then((response) => {
       console.log('response: ', response.passcode);
@@ -93,8 +97,11 @@ export default function Component() {
           //     ctx.closePath()
           // }}
           gravity={0.09}
+          colors={gender == 'male' ? [boy] : [girl]}
           tweenDuration={1000}
-        />)}
+          numberOfPieces={600}
+        />
+      )}
       <div className="reveal-container">
 
         <section id="cover" className="min-vh-100">
@@ -141,6 +148,7 @@ export default function Component() {
                                 </h1>
                                 <div className="display-4 py-2 master-passcode">
                                   <input
+                                    className="form-control"
                                     type="text"
                                     placeholder="Please Enter Master Passcode"
                                     onChange={(e) => setPasscode(e.target.value)}
@@ -160,7 +168,7 @@ export default function Component() {
                           <>
                             <h1 className="display-4 py-2">
                               <TypeIt>
-                                Let's Count down? Ready
+                                Let's Start Count down? Ready
                               </TypeIt>
                               {/* <TypeIt
                                 getBeforeInit={(instance) => {
@@ -186,7 +194,7 @@ export default function Component() {
 
                         {/* Show the Gender after timer is out */}
                         {wantToRevealGender && confirmedReveal && !error && count === 0 && (
-                          <h2>Hurra ! It's a
+                          <h2 className="display-4 py-2">Hurray ! It's a
                             <TypeIt>
                               <SuperStrong>{gender}</SuperStrong>
                             </TypeIt>
@@ -197,7 +205,7 @@ export default function Component() {
                       {/* Show the error message when error is not null*/}
                       <Toast onClose={() => setError(null)} show={!!error} delay={6000} autohide>
                         <Toast.Header>
-                          <h3 className="me-auto">{error}</h3>
+                          <h3 className="me-auto ">{error}</h3>
                         </Toast.Header>
                       </Toast>
                     </Form>

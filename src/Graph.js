@@ -11,7 +11,9 @@ var chart = am4core.create("chartdiv", am4plugins_forceDirected.ForceDirectedTre
 var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries());
 
 export default function Graph() {
-    const [chartData, setchartData] = useState([])
+    const [chartData, setchartData] = useState([]);
+    const boy = "#03D0FE";
+    const girl = "#FE03EF";
     useEffect(() => {
         getData();
     }, []);
@@ -40,22 +42,32 @@ export default function Graph() {
         setchartData([
             {
                 name: "Male",
-                value: maleArray.length * 200,
-                children: maleArray
+                value: maleArray.length * 30,
+                children: maleArray,
+                color: '#fffff'
             },
             {
                 name: "Female",
-                value: femaleArray.length * 200,
-                children: femaleArray
+                value: femaleArray.length * 30,
+                children: femaleArray,
+                color: '#fffff'
             }
         ]);
     }
 
     chart.data = chartData;
 
+    networkSeries.colors.list = [
+        am4core.color(boy),
+        am4core.color(girl),
+    ];
     networkSeries.dataFields.value = "value";
     networkSeries.dataFields.name = "name";
     networkSeries.dataFields.children = "children";
+
+    if (networkSeries.dataFields.name == 'male') {
+        return am4core.color("#00000");
+    }
     networkSeries.nodes.template.tooltipText = "{name}";
     networkSeries.nodes.template.fillOpacity = 1;
 

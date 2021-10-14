@@ -20,6 +20,7 @@ const Guess = () => {
             const yourGuess = { gender: gender, name: name };
             const isDuplicateGuess = prevGuesses.some(prevGuess => prevGuess.name === name);
             if (!isDuplicateGuess) {
+                document.getElementById('form').reset();
                 let data = [...prevGuesses, yourGuess];
                 axios.put(putUrl, data).then((response) => {
                     setInfoText(name + " your Guess is recorded !");
@@ -62,7 +63,7 @@ const Guess = () => {
                                 <div className="col-xl-10 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-5">
                                     <h1 className="display-4 py-2">Now it's your turn to Guess</h1>
                                     <div className="px-2">
-                                        <Form className="justify-content-center forms-inline">
+                                        <Form className="justify-content-center forms-inline" id="form">
                                             <Container>
                                                 <Row>
                                                     <Col md={6}>
@@ -77,7 +78,7 @@ const Guess = () => {
                                                     </Col>
                                                     <Col md={6}>
                                                         <div className="form-group">
-                                                            <label className="sr-only">name</label>
+                                                            <label className="sr-only">Name</label>
                                                             <input type="text" className="form-control" placeholder="Enter minimum 5 characters" value={name} onChange={(e) => setName(e.target.value)} />
                                                         </div>
                                                     </Col>

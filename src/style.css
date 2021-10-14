@@ -20,6 +20,9 @@ body {
   color: wheat;
 }
 
+.form-control, .form-select{
+  font-size: 1.5rem;
+}
 .elements{
   margin:20% 20% 40px;
 }
