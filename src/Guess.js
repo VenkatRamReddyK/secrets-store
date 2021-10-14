@@ -2,87 +2,38 @@ import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 import axios from 'axios';
-const Cryptr = require('cryptr');
-import _ from 'lodash'
 
+const getUrl =
+    'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6a905f480bfab4ed69dc0801c760f03069f2393e7f2872931318646f1a0799d0';
+const putUrl = 'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fa4980eca12b542dd45fda5ab7d795b9cd89c9c91e5e500e9158f4c7d4bf3500';
 
-export default function Guess() {
-
-
-    const [gender, setGender] = useState('');
-    const [name, setname] = useState("");
+const Guess = () => {
+    const [gender, setGender] = useState('default');
+    const [name, setName] = useState("");
     const { width, height } = '100%';
-    const [show, setShow] = useState(false);
-    const [infoText, setinfoText] = useState('');
-    const [isValidForm, setisValidForm] = useState(false);
-    const [oldData, setoldData] = useState([])
+    const [infoText, setInfoText] = useState('');
 
-    function validateForm() {
-        if (gender.length <= 3 || name.length <= 4)
-            setisValidForm(false);
-        else
-            setisValidForm(true);
-    }
-    useEffect(() => {
-        validateForm()
-    }, [name, gender]);
-
-    useEffect(() => {
-        if (oldData != null)
-            saveData();
-    }, [oldData])
-
-
-    const getData = () => {
-        console.log('In Get Data...');
-        let url =
-            'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6a905f480bfab4ed69dc0801c760f03069f2393e7f2872931318646f1a0799d0';
-
-        axios.get(url).then((response) => {
-            setoldData(response.data);
-            console.log('response: ', response.data);
+    const saveYourGuess = () => {
+        axios.get(getUrl).then((getResponse) => {
+            let prevGuesses = getResponse.data ? getResponse.data : [];
+            console.log("Previous Data ", prevGuesses)
+            const yourGuess = { gender: gender, name: name };
+            const isDuplicateGuess = prevGuesses.some(prevGuess => prevGuess.name === name);
+            if (!isDuplicateGuess) {
+                let data = [...prevGuesses, yourGuess];
+                axios.put(putUrl, data).then((response) => {
+                    setInfoText(name + " your Guess is recorded !");
+                    setGender('default');
+                    setName('');
+                    console.log('response: ', response.data);
+                });
+            } else {
+                setInfoText(name + " your Guess is already recorded !");
+                setGender('default');
+                setName('');
+            }
         });
-    };
-
-    function saveData() {
-        console.log("Data is", oldData)
-        // let data = { gender: 'm', name: 'tanvi' };
-        if (isValidForm) {
-            const encryptedGender = gender;
-            const encryptedname = name;
-
-            // const decryptedString = cryptr.decrypt(encryptedGender);
-            let thisData = [{ gender: encryptedGender, name: encryptedname }];
-            let data = [];
-            let maleArray = [];
-            let femaleArray = [];
-            console.log("Old Data is",oldData)
-
-            maleArray = oldData[0] ? oldData[0].length == 0 ? [] : oldData[0] : [];
-            femaleArray = oldData[1] ? oldData[1].length == 0 ? [] : oldData[1] : [];
-
-            console.log(maleArray);
-
-            if (thisData[0].gender == 'male')
-                maleArray.push(...thisData);
-            else
-                femaleArray.push(...thisData);
-
-            data = [maleArray, femaleArray];
-
-            console.log("Data is ", data)
-            const url = 'https://gender-reveals.s3.amazonaws.com/data/guess.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211013%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211013T044343Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fa4980eca12b542dd45fda5ab7d795b9cd89c9c91e5e500e9158f4c7d4bf3500'
-            axios.put(url, data).then((response) => {
-                setinfoText("Response Completed");
-                setShow(true);
-                console.log('response: ', response.data);
-            });
-        }
-        else {
-            setinfoText("Please Make sure your select a gender and insert name which is greater than 5 characters");
-            setShow(true);
-        }
-    };
+    }
 
     return (
         <div>
@@ -118,7 +69,7 @@ export default function Guess() {
                                                         <div className="form-group">
                                                             <label className="sr-only inputsHeading">Gender</label>
                                                             <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
-                                                                <option value="no">Select the Gender</option>
+                                                                <option value="default">Select the Gender</option>
                                                                 <option value="male">Male</option>
                                                                 <option value="female">Female</option>
                                                             </Form.Select>
@@ -127,21 +78,23 @@ export default function Guess() {
                                                     <Col md={6}>
                                                         <div className="form-group">
                                                             <label className="sr-only">name</label>
-                                                            <input type="text" className="form-control" placeholder="********" value={name} onChange={(e) => setname(e.target.value)} />
+                                                            <input type="text" className="form-control" placeholder="Enter minimum 5 characters" value={name} onChange={(e) => setName(e.target.value)} />
                                                         </div>
                                                     </Col>
 
                                                 </Row>
                                             </Container>
                                             <Button
-                                                onClick={() => getData()}
-                                                disabled={!isValidForm}
+                                                onClick={() => saveYourGuess()}
+                                                disabled={gender === 'default' || name.length <= 4}
                                                 className="btn btn-primary btn-lg submitButton">
-                                                Send My Answer
-                                            </Button>
-                                            <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
+                                                Save Your Guess
+                                        </Button>
+                                            <Toast onClose={() => setInfoText('')} show={!!infoText} delay={6000} autohide>
                                                 <Toast.Header>
-                                                    <h3 className="me-auto">{infoText}</h3>
+                                                    <h3 className="me-auto">
+                                                        {infoText}
+                                                    </h3>
                                                 </Toast.Header>
                                             </Toast>
                                         </Form>
@@ -153,6 +106,9 @@ export default function Guess() {
                     </div>
                 </section>
             </div>
-        </div>
+        </div >
     )
 }
+
+
+export default Guess;

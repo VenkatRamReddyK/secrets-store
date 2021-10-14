@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './style.css';
 import {
   BrowserRouter as Router,
@@ -12,7 +12,8 @@ import Surprise from './Surprise.js';
 import Input from './Input'
 import Guess from './Guess';
 
-export default function App() {
+const App = () => {
+
   return (
     <div >
       <Router>
@@ -56,3 +57,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
