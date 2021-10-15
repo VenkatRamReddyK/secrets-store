@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti'
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
 import axios from 'axios';
-import StringCrypto from 'string-crypto';
-
 
 export default function input() {
     const [gender, setGender] = useState('');
@@ -26,33 +24,13 @@ export default function input() {
 
 
     function saveData() {
-        // let data = { gender: 'm', passcode: 'tanvi' };
-        if (validateForm(gender, passCode)) {
-            const {
-                encryptString,
-                decryptString,
-            } = new StringCrypto();
-            document.getElementById('form').reset();
-
-            let encryptedString = encryptString(gender, passCode);
-
-           let encryptedPasscode=encryptString(passCode,encryptedString);
-
-            console.log('Decrypted String:', decryptString(encryptedPasscode, encryptedString))
-
-            // const decryptedString = cryptr.decrypt(encryptedGender);
-            let data = { gender: encryptedString, passcode: encryptedPasscode };
-            const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
-            axios.put(url, data).then((response) => {
-                setinfoText("Response Completed");
-                setShow(true);
-                console.log('response: ', data);
-            });
-        }
-        else {
-            setinfoText("Please Make sure your select a gender and insert Passcode which is greater than 5 characters");
+        document.getElementById('form').reset();
+        let data = { gender: gender, passcode: passCode };
+        const url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
+        axios.put(url, data).then((response) => {
+            setinfoText("We saved your input");
             setShow(true);
-        }
+        });
     };
 
     return (
@@ -90,8 +68,8 @@ export default function input() {
                                                             <label className="sr-only inputsHeading">Gender</label>
                                                             <Form.Select aria-label="Default select example" onChange={(e) => setGender(e.target.value)}>
                                                                 <option>Select the Gender</option>
-                                                                <option value="male">Male</option>
-                                                                <option value="female">Female</option>
+                                                                <option value="boy">Boy</option>
+                                                                <option value="girl">Girl</option>
                                                             </Form.Select>
                                                         </div>
                                                     </Col>
@@ -106,10 +84,11 @@ export default function input() {
                                             </Container>
                                             <Button
                                                 onClick={() => saveData()}
+                                                disabled={!passCode || passCode?.length < 4 || !(gender === 'boy' || gender === 'girl')}
                                                 className="btn btn-primary btn-lg submitButton">
-                                                Send My Answer
+                                                Save Gender Details
                                             </Button>
-                                            <Toast onClose={() => setShow(false)} show={show} delay={6000} autohide>
+                                            <Toast onClose={() => setShow(false)} show={show} delay={1000} autohide>
                                                 <Toast.Header>
                                                     <h3 className="me-auto">{infoText}</h3>
                                                 </Toast.Header>

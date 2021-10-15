@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Row, Col, Toast, Button } from 'react-bootstrap';
-import StringCrypto from 'string-crypto';
 import useInterval from './services/useInterval.js';
 import TypeIt from "typeit-react";
 import Confetti from 'react-confetti'
@@ -37,7 +36,6 @@ export default function Component() {
   const validatePasscode = () => {
     console.log('In Get Data...');
     setConfirmedReveal(true);
-    // setDelay(1000);
     let url =
       'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155423Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f6629ac618871e1d6a28cb23c02498e3874e1793e6c6033eb44f161407211639';
 
@@ -45,17 +43,9 @@ export default function Component() {
     axios.get(url).then((response) => {
       console.log('response: ', response.data);
       try {
-        const {
-          decryptString,
-        } = new StringCrypto();
-        const decryptedPasscode = decryptString(response.data.passcode, response.data.gender);
-        // console.log("Ciper passcode: ", response.data.passcode);
-
-        if (decryptedPasscode === passcode) {
-          //const decryptedString = cryptr.decrypt(response.data.gender);
-          const decryptedString = decryptString(response.data.gender, passcode);
+        if (response.data.passcode === passcode) {
           setDelay(1000);
-          setGender(decryptedString);
+          setGender(response.data.gender);
         } else {
           setDelay(null);
           setError("Invalid passcode");
@@ -70,20 +60,20 @@ export default function Component() {
     });
   };
 
-  // For Testing purpose.
-  const saveData = (form) => {
-    console.log("In Save Data: ", form);
-    // let data = { gender: 'm', passcode: 'tanvi' };
-    let data = { gender: gender, passcode: passCode };
-    let url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
-    axios.put(url, data).then((response) => {
-      console.log('response: ', response.passcode);
-    });
-  };
+  // // For Testing purpose.
+  // const saveData = (form) => {
+  //   console.log("In Save Data: ", form);
+  //   // let data = { gender: 'm', passcode: 'tanvi' };
+  //   let data = { gender: gender, passcode: passCode };
+  //   let url = 'https://gender-reveals.s3.amazonaws.com/data/data.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVOEG5XWC35GBSXXY%2F20211010%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20211010T155502Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=de41201250367819b4f7ec44d3e3aa6690b53d938b7933bde8d82d06b8427b84'
+  //   axios.put(url, data).then((response) => {
+  //     console.log('response: ', response.passcode);
+  //   });
+  // };
 
   return (
     <>
-      {passcode && !!gender && !error && !delay && (
+      {passcode && !!gender && !error && count < 5 && (
         <Confetti
           width={width}
           height={height}
@@ -99,7 +89,7 @@ export default function Component() {
           //     ctx.closePath()
           // }}
           gravity={0.09}
-          colors={gender == 'male' ? [boy] : [girl]}
+          colors={gender == 'boy' ? [boy] : [girl]}
           tweenDuration={1000}
           numberOfPieces={600}
         />
