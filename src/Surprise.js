@@ -204,12 +204,12 @@ export default function Component() {
               </div>
             </div>
           </div>
-          
+
         </section>
-      
+
         <div className="chartdiv">
-        <Graph/>
-</div>
+          <Graph />
+        </div>
 
         {error && (
           <p>

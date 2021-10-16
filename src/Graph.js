@@ -28,6 +28,7 @@ export default function Graph() {
             formatData(response.data);
         });
     };
+    
 
     function formatData(data) {
         data = data.map(el => {
@@ -53,7 +54,7 @@ export default function Graph() {
             }
         ]);
     }
-
+    if(chartData!=chart.data)
     chart.data = chartData;
 
     networkSeries.colors.list = [

@@ -1,1 +1,31 @@
 <div id="root"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    dirR = "+=2";
+dirL = "+=2";
+
+function moveDir() {
+if (Math.random() > 0.95) {
+  swapDirL();
+}
+if (Math.random() < 0.05) {
+  swapDirR();
+}
+}
+
+function swapDirL() {
+    if(dirL == "+=2") {
+        dirL = "-=2";
+    }
+    else {
+      dirL = "+=2";   
+    }
+}
+
+function swapDirR() {
+    dirR == "+=2" ? dirR = "-=2" : dirR = "+=2";   
+}
+
+
+// setInterval (function() { $("g").css("left", dirL); $("g").css("top", dirR); moveDir(); } , 50)
+</script>
